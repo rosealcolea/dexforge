@@ -1,0 +1,751 @@
+/* =========================================================
+   STREAM DEX CASE STUDY (case-study.html)
+   Builds on css/pokedex.css: same red header, cards, tiles
+   and tables. Headings, labels and numbers keep Press Start 2P
+   like the rest of the site; long prose uses Inter so a
+   hiring manager can read it quickly. Print rules at the end
+   produce the two-page PDF.
+   ========================================================= */
+
+.case-study {
+  --cs-red: #cc0000;
+  --cs-red-soft: #fff5f5;
+  --cs-ink: #111;
+  --cs-ink-2: #444;
+  --cs-ink-3: #6b6b6b;
+  --cs-surface: #fff;
+  --cs-surface-2: #f4f4f4;
+  --cs-border: #333;
+  --cs-grid: #e3e3e3;
+  --cs-pending: #fbc02d;
+  --cs-draft: #1e88e5;
+  --cs-draft-soft: #e3f2fd;
+  --cs-prose: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --cs-pixel: "Press Start 2P", monospace;
+}
+
+/* The hidden attribute must win over the display rules below. */
+.case-study [hidden] { display: none !important; }
+
+/* ---------- layout ---------- */
+
+.case-study .landing-container {
+  max-width: 1000px;
+  margin: 24px auto;
+  padding: 0 16px;
+  gap: 24px;
+  box-sizing: border-box;
+}
+
+.case-study .streamdex-header {
+  gap: 16px;
+}
+
+.case-study .streamdex-header h1 {
+  font-size: 20px;
+  line-height: 1.5;
+}
+
+/* ---------- prose ---------- */
+
+.case-study p,
+.case-study li,
+.case-study td,
+.case-study figcaption,
+.case-study summary {
+  font-family: var(--cs-prose);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--cs-ink);
+}
+
+.case-study .landing-card p { margin: 0 0 12px; }
+.case-study .landing-card p:last-child { margin-bottom: 0; }
+
+.case-study .landing-card h2 {
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 0 0 16px;
+}
+
+.case-study h3 {
+  font-family: var(--cs-pixel);
+  font-size: 11px;
+  line-height: 1.7;
+  margin: 24px 0 10px;
+}
+
+.case-study h4 {
+  font-family: var(--cs-pixel);
+  font-size: 10px;
+  line-height: 1.7;
+  margin: 0 0 10px;
+}
+
+.case-study .about-list {
+  margin: 10px 0 16px 20px;
+  padding: 0;
+}
+
+.case-study .about-list li { margin-bottom: 8px; }
+
+.case-study .landing-card code,
+.case-study .command-table code {
+  font-family: var(--cs-pixel);
+  font-size: 9px;
+  padding: 3px 7px;
+  vertical-align: middle;
+}
+
+.case-study .landing-card a { color: var(--cs-red); }
+
+.cs-num {
+  display: inline-block;
+  font-family: var(--cs-pixel);
+  font-size: 9px;
+  color: var(--cs-red);
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.cs-section { scroll-margin-top: 80px; }
+
+.cs-lede {
+  font-size: 17px;
+  color: var(--cs-ink-2);
+}
+
+/* ---------- hero ---------- */
+
+.cs-hero {
+  border-color: var(--cs-red);
+  box-shadow: 0 6px 0 var(--cs-red);
+}
+
+.cs-kicker {
+  font-family: var(--cs-pixel) !important;
+  font-size: 11px !important;
+  letter-spacing: 1px;
+  color: var(--cs-red) !important;
+  margin: 0 0 14px !important;
+}
+
+.cs-tagline {
+  font-family: var(--cs-prose) !important;
+  font-size: 22px !important;
+  font-weight: 600;
+  line-height: 1.4 !important;
+  margin: 0 0 14px !important;
+}
+
+.cs-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 18px 0 20px;
+}
+
+.cs-links a {
+  font-family: var(--cs-pixel);
+  font-size: 8px;
+  line-height: 1;
+  padding: 9px 12px;
+  border-radius: 999px;
+  border: 2px solid var(--cs-border);
+  background: var(--cs-surface);
+  color: var(--cs-ink);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.cs-links a:hover {
+  background: var(--cs-red);
+  border-color: var(--cs-red);
+  color: #fff;
+}
+
+/* ---------- stat tiles ---------- */
+
+.cs-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.cs-tile {
+  background: var(--cs-surface-2);
+  border: 2px solid var(--cs-border);
+  border-radius: 12px;
+  padding: 14px 10px 12px;
+  text-align: center;
+}
+
+.cs-tile strong {
+  display: block;
+  font-family: var(--cs-pixel);
+  font-size: 16px;
+  line-height: 1.3;
+  color: var(--cs-red);
+  margin-bottom: 8px;
+}
+
+.cs-tile span {
+  display: block;
+  font-family: var(--cs-prose);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.cs-tile small {
+  display: block;
+  font-family: var(--cs-prose);
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--cs-ink-3);
+  margin-top: 6px;
+}
+
+.cs-tiles--dense {
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+}
+
+.cs-tiles--dense .cs-tile strong { font-size: 13px; }
+
+@media (min-width: 640px) {
+  .cs-tiles--eight { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* ---------- badges ---------- */
+
+.badge {
+  display: inline-block;
+  font-family: var(--cs-pixel);
+  font-size: 7px;
+  line-height: 1;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 5px 8px;
+  border-radius: 999px;
+  border: 2px solid var(--cs-border);
+  vertical-align: middle;
+  margin-left: 6px;
+  white-space: nowrap;
+}
+
+.badge-confirm { background: var(--cs-pending); color: #222; }
+.badge-draft   { background: var(--cs-draft); color: #fff; border-color: var(--cs-draft); }
+.badge-pending { background: #fff; color: var(--cs-red); border-color: var(--cs-red); }
+
+/* ---------- placeholder frames ---------- */
+
+.ph {
+  position: relative;
+  box-sizing: border-box;
+  border: 3px dashed var(--cs-border);
+  border-radius: 14px;
+  background: repeating-linear-gradient(135deg, #fafafa 0 12px, #efefef 12px 24px);
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+  min-height: 120px;
+}
+
+.ph-tag {
+  font-family: var(--cs-pixel);
+  font-size: 7px;
+  letter-spacing: 1px;
+  line-height: 1;
+  background: var(--cs-pending);
+  color: #222;
+  border: 2px solid var(--cs-border);
+  border-radius: 999px;
+  padding: 5px 10px;
+}
+
+.ph-title {
+  font-family: var(--cs-pixel);
+  font-size: 10px;
+  line-height: 1.7;
+  margin: 2px 0 0;
+}
+
+.ph p {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--cs-ink-2);
+  margin: 0;
+  max-width: 62ch;
+}
+
+.ph--video {
+  aspect-ratio: 16 / 9;
+  min-height: 0;
+  margin: 0 0 4px;
+}
+
+.ph--draft {
+  border-color: var(--cs-draft);
+  background: var(--cs-draft-soft);
+  align-items: flex-start;
+  text-align: left;
+}
+
+.ph--draft .ph-tag {
+  background: var(--cs-draft);
+  color: #fff;
+  border-color: var(--cs-draft);
+}
+
+.ph--draft p { max-width: none; color: var(--cs-ink); }
+
+/* ---------- tables ---------- */
+
+.case-study .command-table {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 8px 0 4px;
+}
+
+.case-study .command-table th {
+  font-family: var(--cs-pixel);
+  font-size: 8px;
+}
+
+.case-study .command-table td {
+  font-family: var(--cs-prose);
+  font-size: 14px;
+}
+
+.case-study .command-table td:first-child {
+  width: 24%;
+  font-weight: 600;
+}
+
+.case-study .price-table td:first-child { width: 40%; }
+.case-study .price-table td { font-size: 13px; }
+
+@media (max-width: 480px) {
+  .case-study .command-table td:first-child { width: auto; }
+
+  /* The short price table stays a real table on phones (the site stacks
+     the wide command tables, which is right for those but not for this). */
+  .case-study .price-table thead { display: table-header-group; }
+  .case-study .price-table tr { display: table-row; }
+  .case-study .price-table td,
+  .case-study .price-table th { display: table-cell; padding: 8px 10px; border-bottom: 2px solid #ddd; }
+  .case-study .price-table tr:last-child td { border-bottom: none; }
+}
+
+/* ---------- rule boxes (economy, versions) ---------- */
+
+.case-study .rule-grid { margin: 8px 0 4px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+
+.case-study .rule-box ul.cs-list {
+  list-style: disc;
+  margin: 0;
+  padding-left: 18px;
+  gap: 6px;
+}
+
+.case-study .rule-box .cs-list li {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.cs-versions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin: 8px 0 4px;
+}
+
+.cs-version-date {
+  font-family: var(--cs-prose);
+  font-size: 12px;
+  color: var(--cs-ink-3);
+  margin: -4px 0 10px;
+}
+
+/* ---------- diagrams ---------- */
+
+.cs-diagram {
+  background: var(--cs-surface);
+  border: 2px solid var(--cs-border);
+  border-radius: 12px;
+  padding: 12px;
+  margin: 8px 0 16px;
+}
+
+.cs-diagram svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: var(--cs-prose);
+  overflow: visible;
+}
+
+.cs-diagram svg.cs-diagram-tall { display: none; }
+
+@media (max-width: 639px) {
+  .cs-diagram svg.cs-diagram-wide { display: none; }
+  .cs-diagram svg.cs-diagram-tall { display: block; max-width: 340px; margin: 0 auto; }
+}
+
+.cs-diagram .node { fill: #fff; stroke: #333; stroke-width: 2; }
+.cs-diagram .node-hi { fill: #fff5f5; stroke: #cc0000; }
+.cs-diagram .node-out { fill: #f4f4f4; }
+.cs-diagram text { fill: #111; font-size: 12px; }
+.cs-diagram .small text, .cs-diagram text.small { font-size: 10.5px; }
+.cs-diagram .mono { font-family: var(--cs-pixel); font-size: 8px; }
+.cs-diagram .small .mono { font-size: 6.5px; }
+.cs-diagram .note { fill: #555; font-size: 11px; font-style: italic; }
+.cs-diagram .edge { stroke: #333; stroke-width: 2; fill: none; }
+.cs-diagram .edge-soft { stroke: #cc0000; }
+
+.cs-figcaption {
+  font-size: 13px !important;
+  color: var(--cs-ink-3) !important;
+  margin: -8px 0 16px !important;
+}
+
+/* ---------- gallery and quotes ---------- */
+
+.cs-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin: 8px 0 4px;
+}
+
+.cs-gallery .ph {
+  aspect-ratio: 16 / 9;
+  min-height: 0;
+  padding: 12px;
+}
+
+.cs-gallery .ph p { font-size: 12px; }
+
+.cs-quotes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin: 8px 0 4px;
+}
+
+/* ---------- results ---------- */
+
+.cs-source {
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+  color: var(--cs-ink-3) !important;
+  margin: 8px 0 0 !important;
+}
+
+.cs-caveat {
+  border-left: 4px solid var(--cs-red);
+  background: var(--cs-red-soft);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 16px 0 0;
+}
+
+.cs-caveat p { margin: 0; font-size: 14px; }
+
+/* chart block */
+
+.cs-chart-block {
+  margin: 8px 0 4px;
+}
+
+.cs-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.cs-chart {
+  background: var(--cs-surface);
+  border: 2px solid var(--cs-border);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.cs-chart h4 { margin: 0 0 8px; font-size: 9px; }
+
+.cs-chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: var(--cs-prose);
+  overflow: visible;
+}
+
+.cs-chart .grid line { stroke: var(--cs-grid); stroke-width: 1; }
+.cs-chart .axis text { fill: var(--cs-ink-3); font-size: 10px; }
+.cs-chart .series { stroke: var(--cs-red); stroke-width: 2; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+.cs-chart .dot { fill: var(--cs-red); stroke: #fff; stroke-width: 2; }
+.cs-chart .launch-line { stroke: #333; stroke-width: 1; }
+.cs-chart .launch-text { fill: var(--cs-ink-2); font-size: 10px; }
+.cs-chart .endlabel { fill: var(--cs-ink); font-size: 11px; font-weight: 600; }
+.cs-chart .hit { fill: transparent; }
+.cs-chart .hit:hover + .hover-dot { opacity: 1; }
+.cs-chart .hover-dot { opacity: 0; fill: #fff; stroke: var(--cs-red); stroke-width: 2; pointer-events: none; }
+
+.cs-tooltip {
+  position: fixed;
+  z-index: 100;
+  pointer-events: none;
+  background: #222;
+  color: #fff;
+  font-family: var(--cs-prose);
+  font-size: 12px;
+  line-height: 1.4;
+  padding: 6px 9px;
+  border-radius: 6px;
+  transform: translate(-50%, calc(-100% - 10px));
+  white-space: nowrap;
+}
+
+.cs-chart-table { margin-top: 12px; }
+.cs-chart-table summary {
+  cursor: pointer;
+  font-family: var(--cs-pixel);
+  font-size: 9px;
+}
+
+.cs-chart-table .command-table td:first-child { width: auto; font-weight: 400; }
+
+/* ---------- learned (draft) ---------- */
+
+.cs-prompts {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.cs-prompts li { margin-bottom: 10px; }
+
+.cs-prompts li em {
+  display: block;
+  font-style: normal;
+  font-size: 13px;
+  color: var(--cs-ink-3);
+}
+
+/* ---------- contact ---------- */
+
+.cs-contact-list {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 6px 20px;
+}
+
+.cs-contact-list li { margin: 0; }
+
+.cs-ip {
+  font-size: 13px !important;
+  color: var(--cs-ink-3) !important;
+}
+
+.cs-footer {
+  text-align: center;
+  font-family: var(--cs-prose);
+  font-size: 12px;
+  color: #fff;
+  padding: 0 16px 32px;
+}
+
+.cs-footer a { color: #fff; }
+
+.print-only { display: none; }
+
+/* ---------- jump nav on this page ---------- */
+
+.case-study .handbook-nav { top: 8px; }
+
+/* ---------- phone ---------- */
+
+@media (max-width: 480px) {
+  .case-study .streamdex-header { padding: 16px; }
+  .case-study .streamdex-header h1 { font-size: 13px; }
+  .case-study .streamdex-avatar { width: 48px; height: 48px; }
+  .case-study .landing-card { padding: 20px 16px; border-radius: 16px; }
+  .cs-tagline { font-size: 19px !important; }
+  .cs-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cs-tiles--dense { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cs-tile strong { font-size: 13px; }
+  .cs-tiles--dense .cs-tile strong { font-size: 11px; }
+  .case-study p, .case-study li, .case-study td { font-size: 14px; }
+  .cs-lede { font-size: 15px; }
+  .case-study .command-table td { font-size: 13px; }
+  .cs-gallery, .cs-quotes { grid-template-columns: 1fr; }
+}
+
+/* =========================================================
+   PRINT: the two-page PDF
+   ========================================================= */
+
+@media print {
+  @page { size: A4; margin: 7mm 8mm; }
+
+  html, body.case-study { background: #fff !important; }
+
+  body.case-study {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-size: 8pt;
+    zoom: 0.70; /* print scale; tuned so the page fits two A4 sheets */
+  }
+
+  .header-nav,
+  .handbook-nav,
+  .print-hide,
+  .cs-footer,
+  .cs-tooltip { display: none !important; }
+
+  .print-only { display: block !important; }
+
+  .case-study .streamdex-header {
+    padding: 3mm 4mm;
+    gap: 10px;
+    border-radius: 3px;
+    background: #cc0000 !important;
+    color: #fff !important;
+  }
+
+  .case-study .streamdex-header h1 { font-size: 9pt; }
+  .case-study .streamdex-avatar { width: 28px; height: 28px; border-width: 2px; }
+
+  .case-study .landing-container {
+    max-width: none;
+    margin: 2mm 0 0;
+    padding: 0;
+    gap: 2mm;
+  }
+
+  .case-study .landing-card {
+    border-width: 1px;
+    border-radius: 4px;
+    padding: 2mm 3mm;
+    box-shadow: none !important;
+  }
+
+  .cs-hero { border-width: 1.5px; }
+
+  .case-study p,
+  .case-study li,
+  .case-study td,
+  .case-study figcaption { font-size: 7.6pt; line-height: 1.28; }
+
+  .case-study .landing-card p { margin: 0 0 3pt; }
+  .case-study .landing-card h2 { font-size: 7.5pt; line-height: 1.4; margin: 0 0 4pt; }
+  .case-study h3 { font-size: 6pt; margin: 4pt 0 2.5pt; }
+  .case-study h4 { font-size: 5.8pt; margin: 0 0 3pt; }
+  .cs-num { font-size: 6pt; margin-right: 4pt; }
+  .cs-kicker { font-size: 7pt !important; margin: 0 0 4pt !important; }
+  .cs-tagline { font-size: 11.5pt !important; margin: 0 0 4pt !important; }
+  .cs-lede { font-size: 8.2pt; }
+
+  .case-study .landing-card code,
+  .case-study .command-table code { font-size: 5.5pt; padding: 1px 4px; }
+
+  .badge { font-size: 4.6pt; padding: 2px 4px; border-width: 1px; margin-left: 3px; }
+
+  .cs-links a {
+    font-size: 5.5pt;
+    padding: 4px 7px;
+    border-width: 1px;
+  }
+
+  .cs-links { gap: 5px; margin: 5pt 0 6pt; }
+
+  .cs-tiles { gap: 2mm; margin-top: 2mm; grid-template-columns: repeat(4, 1fr); }
+  .cs-tiles--dense { grid-template-columns: repeat(4, 1fr); }
+  .cs-tiles--eight { grid-template-columns: repeat(8, 1fr); }
+  .cs-tile { padding: 1.5mm 1.2mm; border-width: 1px; border-radius: 4px; }
+  .cs-tile strong { font-size: 9pt; margin-bottom: 3pt; }
+  .cs-tiles--dense .cs-tile strong { font-size: 7.5pt; }
+  .cs-tiles--eight .cs-tile strong { font-size: 6.5pt; }
+  .cs-tile span { font-size: 6.6pt; }
+  .cs-tile small { font-size: 5.6pt; margin-top: 2pt; }
+
+  .ph {
+    min-height: 0;
+    padding: 2mm 3mm;
+    border-width: 1px;
+    border-radius: 4px;
+    gap: 3pt;
+    aspect-ratio: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .ph--video { aspect-ratio: auto; margin: 0 0 2mm; }
+  .ph-tag { font-size: 4.6pt; padding: 2px 5px; border-width: 1px; }
+  .ph-title { font-size: 5.5pt; margin: 0; }
+  .ph p { font-size: 6.6pt; line-height: 1.3; max-width: none; flex: 1 1 100%; }
+
+  .cs-gallery, .cs-quotes, .cs-figcaption, .cs-chart-table { display: none !important; }
+  .print-only.ph { margin: 0; }
+
+  .case-study .command-table {
+    border-width: 1px;
+    border-radius: 3px;
+    font-size: 7pt;
+    margin: 2pt 0;
+  }
+
+  .case-study .command-table th { font-size: 5pt; padding: 3pt 5pt; }
+  .case-study .command-table td { font-size: 7pt; padding: 2.5pt 4pt; border-bottom-width: 1px; line-height: 1.28; }
+  .case-study .price-table td { font-size: 6.6pt; }
+
+  .case-study .rule-grid,
+  .cs-versions { gap: 2mm; margin: 2pt 0; }
+  .case-study .rule-grid { grid-template-columns: repeat(4, 1fr); }
+  .cs-versions { grid-template-columns: repeat(3, 1fr); }
+
+  .case-study .rule-box { padding: 2mm 2.5mm; border-width: 1px; border-radius: 4px; }
+  .case-study .rule-box .cs-list li { font-size: 7pt; line-height: 1.3; }
+  .case-study .rule-box ul.cs-list { gap: 2pt; padding-left: 10pt; }
+  .cs-version-date { font-size: 6.4pt; margin: -2pt 0 4pt; }
+
+  .cs-diagram { padding: 2mm; margin: 2pt 0 4pt; border-width: 1px; border-radius: 4px; }
+  .cs-diagram svg.cs-diagram-wide { display: block !important; }
+  .cs-diagram svg.cs-diagram-tall { display: none !important; }
+  .cs-diagram--loop svg { max-width: 105mm; margin: 0 auto; }
+  .cs-diagram svg.cs-diagram-wide { max-width: 160mm; margin: 0 auto; }
+  .cs-figcaption { font-size: 6.4pt !important; margin: -2pt 0 4pt !important; }
+
+  .cs-two-col { column-count: 2; column-gap: 5mm; }
+  .cs-two-col p { break-inside: avoid; }
+
+  .cs-chart-grid { grid-template-columns: repeat(3, 1fr); gap: 2mm; }
+  .cs-chart { padding: 2mm; border-width: 1px; border-radius: 4px; }
+  .cs-chart h4 { font-size: 5pt; }
+  .cs-chart-table { display: none; }
+
+  .cs-caveat { padding: 4pt 7pt; margin: 4pt 0 0; border-left-width: 2px; }
+  .cs-caveat p { font-size: 7pt; }
+  .cs-source { font-size: 6.2pt !important; margin: 3pt 0 0 !important; }
+
+  .cs-prompts { padding-left: 11pt; }
+  .cs-prompts li { margin-bottom: 3pt; }
+  .cs-prompts li em { font-size: 6.6pt; }
+
+  .cs-contact-list { gap: 2pt 10mm; margin: 0 0 4pt; grid-template-columns: repeat(2, 1fr); }
+  .cs-ip { font-size: 6.6pt !important; }
+
+  .case-study .landing-card a { color: inherit; text-decoration: none; }
+
+  .cs-keep, tr, .cs-tile, .rule-box, .ph, .cs-diagram, .cs-tiles, .cs-chart-block { break-inside: avoid; }
+}

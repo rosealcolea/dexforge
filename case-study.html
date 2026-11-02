@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stream Dex Case Study - Sebastián Quiroga</title>
+  <meta name="description" content="How I designed and built Stream Dex, a live-ops Pokémon collection game played entirely in Twitch chat, and what it did to the channel's numbers.">
+  <link rel="stylesheet" href="css/pokedex.css">
+  <link rel="stylesheet" href="css/case-study.css">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="case-study">
+
+  <header class="streamdex-header">
+    <img src="assets/scromf-avatar.png" alt="Scromf avatar" class="streamdex-avatar">
+    <h1>Stream Dex Case Study</h1>
+    <nav class="header-nav">
+      <a href="./" class="header-nav-link">Home</a>
+      <a href="tutorial" class="header-nav-link">Handbook</a>
+      <a href="https://twitch.tv/scromf9001" target="_blank" rel="noopener" class="header-nav-link">Watch Live</a>
+    </nav>
+  </header>
+
+  <main class="landing-container">
+
+    <!-- 0. HEADER -->
+    <section class="landing-card cs-hero" id="top">
+      <p class="cs-kicker">Sebastián Quiroga</p>
+      <h2 class="cs-tagline">Community manager and live-ops systems designer. I build games that live inside a Twitch chat.</h2>
+      <p class="cs-lede">
+        Stream Dex is a Pokémon collection game played entirely in Twitch chat: catching, evolution, eggs, a Buddy system,
+        trading and an economy with its own shop. I designed it, built every part of it alone, and have run it live on my
+        channel six nights a week since March 2025<span class="badge badge-confirm">launch month to confirm</span>,
+        through three major versions and three regions.
+      </p>
+
+      <div class="cs-links print-hide">
+        <a href="https://twitch.tv/scromf9001" target="_blank" rel="noopener">Twitch</a>
+        <a href="./">Stream Dex</a>
+        <a href="https://github.com/scromf9001/dexforge" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/sebastianquirogaruck" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="mailto:sebasquiro1995@gmail.com">Email</a>
+      </div>
+      <p class="print-only cs-source">
+        twitch.tv/scromf9001 &middot; scromf9001.github.io/dexforge &middot; github.com/scromf9001/dexforge &middot;
+        linkedin.com/in/sebastianquirogaruck &middot; sebasquiro1995@gmail.com
+      </p>
+
+      <div class="ph ph--video" id="ph-video">
+        <span class="ph-tag">Placeholder A1</span>
+        <p class="ph-title">60 to 90 second video</p>
+        <p>A wild Pokémon appears, chat throws balls, someone evolves live with sound, a trade goes through, the Pokédex page opens. Captions, no narration.</p>
+      </div>
+
+      <div class="cs-tiles">
+        <div class="cs-tile">
+          <strong>+84%</strong>
+          <span>Hours watched, year on year</span>
+          <small>SullyGnome, 12 months to 2 Nov 2026 vs the prior 12</small>
+        </div>
+        <div class="cs-tile">
+          <strong>697,000+</strong>
+          <span>Commands run by players</span>
+          <small>Stream Dex player data, 68 trainers, Feb to Oct 2026</small>
+        </div>
+        <div class="cs-tile">
+          <strong>7,800+</strong>
+          <span>Pokémon caught</span>
+          <small>7,866 catches from 19,147 balls thrown, same data</small>
+        </div>
+        <div class="cs-tile">
+          <strong>500+</strong>
+          <span>Broadcasts</span>
+          <small>TwitchTracker, 2 Nov 2026: 511 active days of 747</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- JUMP NAV -->
+    <nav class="handbook-nav print-hide" id="cs-nav">
+      <a href="#problem">Problem</a>
+      <a href="#design">Design</a>
+      <a href="#build">Build</a>
+      <a href="#results">Results</a>
+      <a href="#learned">Learned</a>
+      <a href="#beyond">Beyond</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <!-- 1. THE PROBLEM -->
+    <section class="landing-card cs-section" id="problem">
+      <h2><span class="cs-num">01</span>The problem</h2>
+      <div class="cs-two-col">
+        <p>
+          A three-hour nightly stream on a small channel has three enemies. Lurkers who watch but never chat.
+          Viewers who leave at the ad break and do not come back. Followers who visit once and never return.
+        </p>
+        <p>
+          Chat games existed, but none of them rewarded the four behaviours my channel needed in one coherent loop:
+          staying, chatting, returning and subscribing. Most were a single command with a random result and no progression,
+          so they were fun for a week and then ignored.
+        </p>
+        <p>
+          The constraints were just as clear. No budget, no game engine, one person. It had to run live six nights a week
+          without ever breaking the stream, and a new viewer had to be able to start playing from chat with no explanation.
+        </p>
+      </div>
+    </section>
+
+    <!-- 2. THE DESIGN -->
+    <section class="landing-card cs-section" id="design">
+      <h2><span class="cs-num">02</span>The design</h2>
+      <p>
+        Everything in Stream Dex hangs off one loop. A wild Pokémon appears on the stream overlay, you throw a ball from chat,
+        you collect copies, you evolve them live with sound and animation, and you show the result off: your Buddy walks next to
+        your name in chat and your Pokédex page fills up. Then you want the next one.
+      </p>
+
+      <h3>Core loop</h3>
+      <figure class="cs-diagram cs-diagram--loop" aria-label="Core loop: wild Pokémon appears, catch, collect, evolve, show off, repeat">
+        <svg class="cs-diagram-wide" viewBox="0 0 760 205" role="img" aria-hidden="true">
+          <defs>
+            <marker id="ar-loop-w" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 z" fill="#333"/>
+            </marker>
+          </defs>
+          <rect class="node" x="0" y="30" width="124" height="70" rx="10"/>
+          <text x="62" y="60" text-anchor="middle">Wild Pokémon</text>
+          <text x="62" y="78" text-anchor="middle">appears on stream</text>
+
+          <line class="edge" x1="124" y1="65" x2="157" y2="65" marker-end="url(#ar-loop-w)"/>
+
+          <rect class="node node-hi" x="159" y="30" width="124" height="70" rx="10"/>
+          <text class="mono" x="221" y="58" text-anchor="middle">!catch</text>
+          <text x="221" y="80" text-anchor="middle">pick a ball</text>
+
+          <line class="edge" x1="283" y1="65" x2="316" y2="65" marker-end="url(#ar-loop-w)"/>
+
+          <rect class="node" x="318" y="30" width="124" height="70" rx="10"/>
+          <text x="380" y="60" text-anchor="middle">Collect</text>
+          <text x="380" y="78" text-anchor="middle">3 copies to evolve</text>
+
+          <line class="edge" x1="442" y1="65" x2="475" y2="65" marker-end="url(#ar-loop-w)"/>
+
+          <rect class="node node-hi" x="477" y="30" width="124" height="70" rx="10"/>
+          <text class="mono" x="539" y="58" text-anchor="middle">!evolve</text>
+          <text x="539" y="80" text-anchor="middle">live, with sound</text>
+
+          <line class="edge" x1="601" y1="65" x2="634" y2="65" marker-end="url(#ar-loop-w)"/>
+
+          <rect class="node" x="636" y="30" width="124" height="70" rx="10"/>
+          <text x="698" y="54" text-anchor="middle">Show it off</text>
+          <text class="small" x="698" y="71" text-anchor="middle">Buddy next to your name,</text>
+          <text class="small" x="698" y="86" text-anchor="middle">your Pokédex page</text>
+
+          <path class="edge edge-soft" d="M698 100 V 160 H 62 V 104" marker-end="url(#ar-loop-w)"/>
+          <text class="note" x="380" y="185" text-anchor="middle">want the next one</text>
+        </svg>
+
+        <svg class="cs-diagram-tall" viewBox="0 0 340 450" role="img" aria-hidden="true">
+          <defs>
+            <marker id="ar-loop-t" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 z" fill="#333"/>
+            </marker>
+          </defs>
+          <rect class="node" x="30" y="0" width="230" height="64" rx="10"/>
+          <text x="145" y="28" text-anchor="middle">Wild Pokémon</text>
+          <text x="145" y="46" text-anchor="middle">appears on stream</text>
+          <line class="edge" x1="145" y1="64" x2="145" y2="92" marker-end="url(#ar-loop-t)"/>
+
+          <rect class="node node-hi" x="30" y="94" width="230" height="64" rx="10"/>
+          <text class="mono" x="145" y="122" text-anchor="middle">!catch</text>
+          <text x="145" y="144" text-anchor="middle">pick a ball</text>
+          <line class="edge" x1="145" y1="158" x2="145" y2="186" marker-end="url(#ar-loop-t)"/>
+
+          <rect class="node" x="30" y="188" width="230" height="64" rx="10"/>
+          <text x="145" y="216" text-anchor="middle">Collect</text>
+          <text x="145" y="234" text-anchor="middle">3 copies to evolve</text>
+          <line class="edge" x1="145" y1="252" x2="145" y2="280" marker-end="url(#ar-loop-t)"/>
+
+          <rect class="node node-hi" x="30" y="282" width="230" height="64" rx="10"/>
+          <text class="mono" x="145" y="310" text-anchor="middle">!evolve</text>
+          <text x="145" y="332" text-anchor="middle">live, with sound</text>
+          <line class="edge" x1="145" y1="346" x2="145" y2="374" marker-end="url(#ar-loop-t)"/>
+
+          <rect class="node" x="30" y="376" width="230" height="64" rx="10"/>
+          <text x="145" y="400" text-anchor="middle">Show it off</text>
+          <text class="small" x="145" y="418" text-anchor="middle">Buddy in chat, Pokédex page</text>
+
+          <path class="edge edge-soft" d="M260 408 H 310 V 32 H 264" marker-end="url(#ar-loop-t)"/>
+          <text class="note" x="330" y="222" text-anchor="middle" transform="rotate(-90 330 222)">want the next one</text>
+        </svg>
+      </figure>
+      <p class="cs-figcaption">Two commands carry the whole loop. Everything else below exists to give players a reason to come back to it.</p>
+
+      <h3>Progression layers</h3>
+      <p>Each layer adds one more reason to return. None of them is required to play; all of them reward presence.</p>
+      <table class="command-table cs-table-3">
+        <thead><tr><th>Layer</th><th>Mechanic</th><th>Behaviour it rewards</th></tr></thead>
+        <tbody>
+          <tr><td>Collection</td><td>Wild spawns at random while I stream. One throw per spawn. Tiered balls: Poké (free, never runs out), Great, Ultra, Master (guaranteed).</td><td>Being present when a spawn happens.</td></tr>
+          <tr><td>Evolution</td><td>Three copies evolve one Pokémon (Magikarp and Swablu need 20, Feebas 10, Nincada 9). Some lines also need a stone, a 2,500-point friendship bond, or a trade. Wurmple and Clamperl evolve at random.</td><td>Long-term collecting, planning, social play.</td></tr>
+          <tr><td>Buddy</td><td>Equip any Pokémon you own. It appears beside your chat name and friendship grows while you watch. <code>!buddy greet</code> banks it, <code>!buddy pet</code> adds 10 with a Pet Token, <code>!buddy feed</code> adds 250 with a Berry. Friendship is shared across the evolution line.</td><td>Watch time, chat identity, small daily rituals.</td></tr>
+          <tr><td>Eggs</td><td>One Egg at a time. It hatches after 20 hours in the stream, and the time only counts while you are there. Baby Pokémon never appear in the wild.</td><td>Return visits across many streams.</td></tr>
+          <tr><td>Trading</td><td>Player-to-player offers in chat with a one-minute window to answer and a repeat to confirm. Trade evolutions fire automatically when both sides end up with three or more.</td><td>Viewer-to-viewer relationships.</td></tr>
+          <tr><td>Pokédex site</td><td>A personal page per player: regions, type mastery, catch performance, Trainer Journey, Buddy, bag and shop. <code>!pokedex</code> rebuilds it and posts the link in chat.</td><td>Pride, completion drive, a shareable link.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Economy: faucets and sinks</h3>
+      <p>Pokecoins are the only currency. Every number below is live today and documented in the Trainer's Handbook.</p>
+      <div class="rule-grid">
+        <div class="rule-box">
+          <h4>Faucets (coins in)</h4>
+          <ul class="cs-list">
+            <li>Coins trickle in while you watch. Subscribers earn a little extra.</li>
+            <li>Every catch pays. A Legendary catch pays everyone in chat.</li>
+            <li>Every ad break pays everyone 150 coins, then a 90-second <code>!bonus</code> window opens: 100 unsubscribed, 350 Tier 1, 600 Tier 2, 850 Tier 3.</li>
+            <li>Release spare fully evolved Pokémon for coins, up to 10,000 for a Legendary. Stone evolutions pay extra. You always keep one copy.</li>
+            <li>Predictions, challenges and giveaways on stream.</li>
+          </ul>
+        </div>
+        <div class="rule-box">
+          <h4>Sinks (coins out)</h4>
+          <table class="command-table price-table">
+            <thead><tr><th>Pokémart item</th><th>Price</th><th>Bag cap</th></tr></thead>
+            <tbody>
+              <tr><td>Great Ball</td><td>250</td><td>99</td></tr>
+              <tr><td>Ultra Ball</td><td>1,000</td><td>99</td></tr>
+              <tr><td>Berry</td><td>1,000</td><td>3</td></tr>
+              <tr><td>Evolution stone (6 kinds)</td><td>2,500</td><td>3 each</td></tr>
+              <tr><td>Egg</td><td>2,500</td><td>1</td></tr>
+              <tr><td>Master Ball</td><td>60,000</td><td>10</td></tr>
+            </tbody>
+          </table>
+          <p class="cs-source">All sales final. Nothing can be sold back.</p>
+        </div>
+        <div class="rule-box">
+          <h4>Guardrails</h4>
+          <ul class="cs-list">
+            <li>Bag caps on every item, so hoarding cannot break the economy.</li>
+            <li>You never pay for something you cannot carry: a full bag means nothing is charged.</li>
+            <li>Mythic Pokémon (Mew, Celebi, Jirachi, Deoxys) cannot be traded or released and never spawn in the wild.</li>
+            <li>One throw per spawn, one trade at a time, one Egg at a time, one bonus claim per ad break.</li>
+            <li>An evolution waits until the encounter on screen has finished.</li>
+          </ul>
+        </div>
+        <div class="rule-box">
+          <h4>Social broadcast moments</h4>
+          <ul class="cs-list">
+            <li>A Master Ball purchase is announced to the whole stream, on purpose.</li>
+            <li>A Legendary catch pays everyone in chat, so one player's luck becomes a shared moment.</li>
+            <li>Evolutions and hatches play on the overlay with sound, so the room reacts.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Retention hooks mapped to Twitch's real problems</h3>
+      <table class="command-table">
+        <thead><tr><th>Twitch problem</th><th>What Stream Dex does about it</th></tr></thead>
+        <tbody>
+          <tr><td>Ad-break drop-off</td><td>150 coins to everyone who is still there when the ad ends, then a 90-second bonus window. Leaving at the ad break costs you twice.</td></tr>
+          <tr><td>Lurkers</td><td>Coins and Buddy friendship accrue silently while you watch, so lurking is still progress. The first catch is one word in chat.</td></tr>
+          <tr><td>Followers who never return</td><td>Eggs and friendship only advance while you are present. A 20-hour Egg is six or seven streams.</td></tr>
+          <tr><td>Monetisation</td><td>Subscribers earn more per hour and the ad-break bonus scales by tier (100, 350, 600, 850). Gifted subs, bits and predictions all feed back into the game.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>The game as players see it</h3>
+      <div class="ph print-only"><span class="ph-tag">Placeholder A2</span><p>Six screenshots pending: wild spawn overlay, evolution animation, Buddy in chat, a Pokédex page, the shop list, the Handbook.</p></div>
+      <div class="cs-gallery" id="ph-screens">
+        <div class="ph"><span class="ph-tag">Placeholder A2.1</span><p class="ph-title">Wild spawn overlay</p><p>A wild Pokémon on the stream overlay while chat throws balls.</p></div>
+        <div class="ph"><span class="ph-tag">Placeholder A2.2</span><p class="ph-title">Evolution animation</p><p>The evolve animation and announcement on stream.</p></div>
+        <div class="ph"><span class="ph-tag">Placeholder A2.3</span><p class="ph-title">Buddy in chat</p><p>A Buddy sprite next to a chat name.</p></div>
+        <div class="ph"><span class="ph-tag">Placeholder A2.4</span><p class="ph-title">Pokédex page</p><p>A player's Pokédex page, Summary tab.</p></div>
+        <div class="ph"><span class="ph-tag">Placeholder A2.5</span><p class="ph-title">The shop list</p><p>The Pokémart price list in chat or on the Shop tab.</p></div>
+        <div class="ph"><span class="ph-tag">Placeholder A2.6</span><p class="ph-title">The Handbook</p><p>The Trainer's Handbook page.</p></div>
+      </div>
+    </section>
+
+    <!-- 3. THE BUILD -->
+    <section class="landing-card cs-section cs-page-break" id="build">
+      <h2><span class="cs-num">03</span>The build</h2>
+      <p>
+        There is no game engine. The bot does the game logic, a Python script turns each player's data into a JSON file,
+        and a static website on GitHub Pages renders it. A watchdog pushes the data after every change, so a player's
+        page is live a few seconds after they type <code>!pokedex</code>.
+      </p>
+
+      <figure class="cs-diagram" aria-label="Architecture: Twitch chat, Mix It Up bot, player data, Python pipeline, per-player JSON, watchdog, GitHub Pages">
+        <svg class="cs-diagram-wide small" viewBox="0 0 760 150" role="img" aria-hidden="true">
+          <defs>
+            <marker id="ar-arch-w" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 z" fill="#333"/>
+            </marker>
+          </defs>
+          <!-- boxes: x = i*111, w = 94, y 48..132 -->
+          <rect class="node node-hi" x="0" y="48" width="94" height="84" rx="10"/>
+          <text x="47" y="78" text-anchor="middle">Twitch chat</text>
+          <text x="47" y="94" text-anchor="middle">players type</text>
+          <text x="47" y="110" text-anchor="middle">commands</text>
+          <line class="edge" x1="94" y1="90" x2="109" y2="90" marker-end="url(#ar-arch-w)"/>
+
+          <rect class="node" x="111" y="48" width="94" height="84" rx="10"/>
+          <text x="158" y="70" text-anchor="middle">Mix It Up bot</text>
+          <text x="158" y="86" text-anchor="middle">commands,</text>
+          <text x="158" y="102" text-anchor="middle">timers, currency,</text>
+          <text x="158" y="118" text-anchor="middle">events</text>
+          <line class="edge" x1="205" y1="90" x2="220" y2="90" marker-end="url(#ar-arch-w)"/>
+
+          <rect class="node" x="222" y="48" width="94" height="84" rx="10"/>
+          <text x="269" y="78" text-anchor="middle">Player data</text>
+          <text x="269" y="94" text-anchor="middle">bot variables</text>
+          <text x="269" y="110" text-anchor="middle">+ CSV lists</text>
+          <line class="edge" x1="316" y1="90" x2="331" y2="90" marker-end="url(#ar-arch-w)"/>
+
+          <rect class="node" x="333" y="48" width="94" height="84" rx="10"/>
+          <text x="380" y="70" text-anchor="middle">Python</text>
+          <text x="380" y="86" text-anchor="middle">pipeline</text>
+          <text class="mono" x="380" y="104" text-anchor="middle">user_pokedex</text>
+          <text class="mono" x="380" y="118" text-anchor="middle">_script.py</text>
+          <line class="edge" x1="427" y1="90" x2="442" y2="90" marker-end="url(#ar-arch-w)"/>
+
+          <rect class="node" x="444" y="48" width="94" height="84" rx="10"/>
+          <text x="491" y="74" text-anchor="middle">Per-player</text>
+          <text x="491" y="90" text-anchor="middle">JSON</text>
+          <text class="mono" x="491" y="110" text-anchor="middle">data/&lt;user&gt;</text>
+          <text class="mono" x="491" y="122" text-anchor="middle">.json</text>
+          <line class="edge" x1="538" y1="90" x2="553" y2="90" marker-end="url(#ar-arch-w)"/>
+
+          <rect class="node" x="555" y="48" width="94" height="84" rx="10"/>
+          <text x="602" y="78" text-anchor="middle">Watchdog</text>
+          <text x="602" y="94" text-anchor="middle">commits and</text>
+          <text x="602" y="110" text-anchor="middle">pushes on change</text>
+          <line class="edge" x1="649" y1="90" x2="664" y2="90" marker-end="url(#ar-arch-w)"/>
+
+          <rect class="node node-out" x="666" y="48" width="94" height="84" rx="10"/>
+          <text x="713" y="78" text-anchor="middle">GitHub Pages</text>
+          <text x="713" y="94" text-anchor="middle">Pokédex site</text>
+          <text x="713" y="110" text-anchor="middle">HTML, CSS, JS</text>
+
+          <path class="edge edge-soft" d="M713 48 V 20 H 47 V 44" marker-end="url(#ar-arch-w)"/>
+          <text class="note" x="380" y="14" text-anchor="middle">!pokedex posts the player's page link back in chat</text>
+        </svg>
+
+        <svg class="cs-diagram-tall" viewBox="0 0 340 632" role="img" aria-hidden="true">
+          <defs>
+            <marker id="ar-arch-t" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 z" fill="#333"/>
+            </marker>
+          </defs>
+          <rect class="node node-hi" x="30" y="0" width="230" height="64" rx="10"/>
+          <text x="145" y="28" text-anchor="middle">Twitch chat</text>
+          <text class="small" x="145" y="46" text-anchor="middle">players type commands</text>
+          <line class="edge" x1="145" y1="64" x2="145" y2="92" marker-end="url(#ar-arch-t)"/>
+
+          <rect class="node" x="30" y="94" width="230" height="64" rx="10"/>
+          <text x="145" y="122" text-anchor="middle">Mix It Up bot</text>
+          <text class="small" x="145" y="140" text-anchor="middle">commands, timers, currency, events</text>
+          <line class="edge" x1="145" y1="158" x2="145" y2="186" marker-end="url(#ar-arch-t)"/>
+
+          <rect class="node" x="30" y="188" width="230" height="64" rx="10"/>
+          <text x="145" y="216" text-anchor="middle">Player data</text>
+          <text class="small" x="145" y="234" text-anchor="middle">bot variables + CSV lists</text>
+          <line class="edge" x1="145" y1="252" x2="145" y2="280" marker-end="url(#ar-arch-t)"/>
+
+          <rect class="node" x="30" y="282" width="230" height="64" rx="10"/>
+          <text x="145" y="310" text-anchor="middle">Python pipeline</text>
+          <text class="mono" x="145" y="330" text-anchor="middle">user_pokedex_script.py</text>
+          <line class="edge" x1="145" y1="346" x2="145" y2="374" marker-end="url(#ar-arch-t)"/>
+
+          <rect class="node" x="30" y="376" width="230" height="64" rx="10"/>
+          <text x="145" y="404" text-anchor="middle">Per-player JSON</text>
+          <text class="mono" x="145" y="424" text-anchor="middle">data/&lt;user&gt;.json</text>
+          <line class="edge" x1="145" y1="440" x2="145" y2="468" marker-end="url(#ar-arch-t)"/>
+
+          <rect class="node" x="30" y="470" width="230" height="64" rx="10"/>
+          <text x="145" y="498" text-anchor="middle">Watchdog</text>
+          <text class="small" x="145" y="516" text-anchor="middle">commits and pushes on change</text>
+          <line class="edge" x1="145" y1="534" x2="145" y2="562" marker-end="url(#ar-arch-t)"/>
+
+          <rect class="node node-out" x="30" y="564" width="230" height="64" rx="10"/>
+          <text x="145" y="592" text-anchor="middle">GitHub Pages</text>
+          <text class="small" x="145" y="610" text-anchor="middle">Pokédex site (HTML, CSS, JS)</text>
+
+          <path class="edge edge-soft" d="M260 596 H 312 V 32 H 264" marker-end="url(#ar-arch-t)"/>
+          <text class="note" x="332" y="314" text-anchor="middle" transform="rotate(-90 332 314)">!pokedex posts the page link back in chat</text>
+        </svg>
+      </figure>
+
+      <h3>Stack, stated honestly</h3>
+      <ul class="about-list">
+        <li><strong>Mix It Up</strong> (stream bot, no-code logic): every command, timer, currency rule, overlay event and sound.</li>
+        <li><strong>Python</strong>: the pipeline that reads the bot's variables and the Pokémon list, computes stats, evolution requirements and type matchups, and writes one JSON file per player. A second script watches the data folder and commits and pushes on every change.</li>
+        <li><strong>HTML, CSS, JavaScript, JSON</strong>: the Pokédex site, fully client-side, on <strong>GitHub Pages</strong>.</li>
+        <li><strong>AI-assisted coding</strong>: I used AI tools while writing the Python and the website code. The design, the rules, the numbers and every decision about what to build are mine.</li>
+      </ul>
+      <p>
+        I am the only person who has worked on it. The public repository holds 896 commits as of 2 November 2026:
+        about 800 of them are the watchdog pushing player data after streams, and 93 are my own changes to the site.
+      </p>
+
+      <h3>Version history<span class="badge badge-confirm">dates and change lists to confirm</span></h3>
+      <div class="cs-versions" id="ph-versions">
+        <div class="rule-box">
+          <h4>V1</h4>
+          <p class="cs-version-date">March 2025 (to confirm)</p>
+          <ul class="cs-list">
+            <li>Kanto region (151 Pokémon).</li>
+            <li>Catching with tiered balls, evolution by copies, the Pokémart.</li>
+            <li>Change list to be supplied.</li>
+          </ul>
+        </div>
+        <div class="rule-box">
+          <h4>V2</h4>
+          <p class="cs-version-date">Date to confirm</p>
+          <ul class="cs-list">
+            <li>Johto region (100 more Pokémon).</li>
+            <li>Buddy system, Eggs, trading (to confirm which arrived here).</li>
+            <li>Change list to be supplied.</li>
+          </ul>
+        </div>
+        <div class="rule-box">
+          <h4>V3</h4>
+          <p class="cs-version-date">Date to confirm</p>
+          <ul class="cs-list">
+            <li>Hoenn region (135 more Pokémon), release-for-coins sink, ad-break bonus (to confirm).</li>
+            <li>Pokédex website: first commit 7 Feb 2026, landing page 19 Feb 2026 (from the repository history).</li>
+            <li>Shop tab and Trainer's Handbook: 17 Oct 2026 (from the repository history).</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Documentation</h3>
+      <p>
+        The <a href="tutorial">Trainer's Handbook</a> puts every command, rule, price and rate in one place, with a five-step
+        quick start at the top. New players onboard themselves from chat, and the moderators point to one page instead of
+        answering the same question twice.
+      </p>
+    </section>
+
+    <!-- 4. THE RESULTS -->
+    <section class="landing-card cs-section" id="results">
+      <h2><span class="cs-num">04</span>The results</h2>
+
+      <h3>Channel level</h3>
+      <p>Public data, 12 months to 2 November 2026 compared with the 12 months before.</p>
+      <div class="cs-tiles cs-tiles--dense">
+        <div class="cs-tile"><strong>20,066</strong><span>Hours watched</span><small>+84.4%</small></div>
+        <div class="cs-tile"><strong>430</strong><span>Followers gained</span><small>+51.9%</small></div>
+        <div class="cs-tile"><strong>15</strong><span>Average viewers</span><small>+25%</small></div>
+        <div class="cs-tile"><strong>1,257</strong><span>Hours streamed</span><small>+42.7%, 278 streams</small></div>
+      </div>
+      <p class="cs-source">Source: SullyGnome 365-day summary, read 2 Nov 2026.</p>
+
+      <h3>Before and after launch<span class="badge badge-pending">data pending</span></h3>
+      <p>
+        Monthly average viewers, chat messages and unique chatters, September 2024 to September 2025, with the launch month marked.
+        The chart reads from <code>data/case-study-metrics.json</code> and renders itself once the numbers are in.
+      </p>
+      <div class="cs-chart-block" id="metrics-block">
+        <div class="ph" id="metrics-pending">
+          <span class="ph-tag">Placeholder A5</span>
+          <p class="ph-title">Twitch Channel Analytics export</p>
+          <p>
+            Three small charts appear here, one per metric, as soon as the monthly numbers are filled into
+            <code>data/case-study-metrics.json</code>. The export is broadcaster-only: Creator Dashboard, Analytics,
+            Channel Analytics, date range 1 Sept 2024 to today, Export CSV.
+          </p>
+        </div>
+        <div class="cs-chart-grid" id="metrics-grid" hidden></div>
+        <details class="cs-chart-table" id="metrics-table" hidden>
+          <summary>Table view</summary>
+          <div id="metrics-table-body"></div>
+        </details>
+        <p class="cs-source" id="metrics-source"></p>
+      </div>
+
+      <h3>Player level</h3>
+      <p>
+        The system's own data: the per-player JSON files in the public repository, recomputed on 2 November 2026.
+        Each file is rebuilt when that player runs <code>!pokedex</code>, so every figure is as of the player's last refresh,
+        between 27 February and 31 October 2026. 68 trainers have a valid file.
+      </p>
+      <div class="cs-tiles cs-tiles--dense cs-tiles--eight">
+        <div class="cs-tile"><strong>697,632</strong><span>Commands run</span></div>
+        <div class="cs-tile"><strong>448,692</strong><span>Chat messages</span></div>
+        <div class="cs-tile"><strong>19,147</strong><span>Balls thrown</span></div>
+        <div class="cs-tile"><strong>7,866</strong><span>Pokémon caught</span></div>
+        <div class="cs-tile"><strong>8,648</strong><span>Pokémon held</span></div>
+        <div class="cs-tile"><strong>1,141</strong><span>Evolutions</span></div>
+        <div class="cs-tile"><strong>132</strong><span>Trade records</span></div>
+        <div class="cs-tile"><strong>240</strong><span>Eggs hatched</span></div>
+      </div>
+      <p class="cs-source">
+        The same 68 players account for 13,233 hours watched and 5,806 stream visits. Pokémon held is higher than Pokémon caught
+        because hatches, trades and event rewards add to a collection while evolutions consume copies.
+      </p>
+
+      <h3>Community</h3>
+      <p>
+        788 followers. 53 active subscribers on about 20 average viewers, 34 of them gifted. 21,472 bits lifetime.
+        TwitchTracker ranks the channel in the top 1.17% of Twitch channels.
+      </p>
+      <p class="cs-source">Source: Twitch About panel and TwitchTracker overview, read 2 Nov 2026.</p>
+
+      <h3>What players say<span class="badge badge-pending">quotes pending</span></h3>
+      <div class="ph print-only"><span class="ph-tag">Placeholder A4</span><p>Three to five viewer or moderator quotes pending, with permission to use the handles.</p></div>
+      <div class="cs-quotes" id="ph-quotes">
+        <div class="ph"><span class="ph-tag">Placeholder A4.1</span><p>A viewer or moderator quote about the game, with permission to use the handle.</p></div>
+        <div class="ph"><span class="ph-tag">Placeholder A4.2</span><p>A second quote.</p></div>
+        <div class="ph"><span class="ph-tag">Placeholder A4.3</span><p>A third quote.</p></div>
+      </div>
+
+      <div class="cs-caveat">
+        <p>
+          Channel growth has several causes: the schedule, the games I pick, collaborations and raids. Stream Dex is the largest
+          single change in the period, and the player data above shows how much of the activity in chat runs through it.
+        </p>
+      </div>
+    </section>
+
+    <!-- 5. WHAT I LEARNED -->
+    <section class="landing-card cs-section" id="learned">
+      <h2><span class="cs-num">05</span>What I learned<span class="badge badge-draft">draft</span></h2>
+      <div class="ph ph--draft" id="ph-learned">
+        <span class="ph-tag">Placeholder A7, draft</span>
+        <p>This section will be two or three short paragraphs in my own words. These are the questions it answers, specific and unglamorous:</p>
+        <ol class="cs-prompts">
+          <li>What broke the economy the first time, and how I fixed it.</li>
+          <li>Why the bag caps exist. <em>Draft note: 99 Great Balls, 99 Ultra Balls, 10 Master Balls, 3 Berries, 3 of each stone, 1 Egg, so that nobody can stockpile their way out of the sinks.</em></li>
+          <li>What the ad-break payout and the 90-second bonus window did to the viewer count during ads.</li>
+          <li>How I decided the evolution costs. <em>Draft note: three copies as the default, twenty for Magikarp and Swablu, a 2,500-point friendship bond that is spent on each evolution, and trade-only lines so that some progress needs another person.</em></li>
+          <li>What I would cut if I started over.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 6. BEYOND THE GAME -->
+    <section class="landing-card cs-section" id="beyond">
+      <h2><span class="cs-num">06</span>Beyond the game</h2>
+      <div class="cs-two-col">
+        <p>
+          <strong>Community operations.</strong> I wrote the chat rules and enforce them, run a moderator team and AutoMod,
+          and keep the community together across Discord, YouTube (a main channel and a VOD channel), TikTok and Instagram.
+        </p>
+        <p>
+          <strong>Partnerships.</strong> Three independent musicians soundtrack the stream in a cross-promotion deal: their music
+          plays live and their work is promoted on stream.<span class="badge badge-confirm">names pending consent (A6)</span>
+        </p>
+        <p>
+          <strong>Before streaming.</strong> At HOG Esports in Yangon (2018 to 2021) I led sponsorship acquisition tied to six-figure
+          partnership agreements and produced national tournaments: the WESG South-East Asia Myanmar qualifiers (2018, 2019),
+          MPL Myanmar seasons 1 and 2, the Synnex Myanmar Game Show 2019 and the Road to Razer SEA Invitational 2020.<span class="badge badge-confirm">to confirm</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="landing-card cs-section" id="contact">
+      <h2><span class="cs-num">07</span>Contact</h2>
+      <p>Sebastián Quiroga, Amsterdam, Netherlands. English and Spanish.</p>
+      <ul class="cs-contact-list">
+        <li>Email: <a href="mailto:sebasquiro1995@gmail.com">sebasquiro1995@gmail.com</a></li>
+        <li>LinkedIn: <a href="https://linkedin.com/in/sebastianquirogaruck" target="_blank" rel="noopener">linkedin.com/in/sebastianquirogaruck</a></li>
+        <li>Twitch: <a href="https://twitch.tv/scromf9001" target="_blank" rel="noopener">twitch.tv/scromf9001</a></li>
+        <li>GitHub: <a href="https://github.com/scromf9001/dexforge" target="_blank" rel="noopener">github.com/scromf9001/dexforge</a></li>
+        <li>Stream Dex: <a href="./">scromf9001.github.io/dexforge</a></li>
+        <li>Trainer's Handbook: <a href="tutorial">scromf9001.github.io/dexforge/tutorial</a></li>
+      </ul>
+      <p class="cs-ip">
+        Stream Dex is a fan-made, non-commercial project. Pokémon is &copy; Nintendo, Game Freak and The Pokémon Company.
+        Every mechanic described here transfers to an original creature set.
+      </p>
+    </section>
+
+  </main>
+
+  <footer class="cs-footer">
+    <a href="./">Home</a> &middot; <a href="tutorial">Trainer's Handbook</a> &middot; <a href="#top">Back to top</a>
+  </footer>
+
+  <script>
+    // Jump-nav highlight, same behaviour as the Handbook page.
+    (function () {
+      var links = Array.prototype.slice.call(document.querySelectorAll("#cs-nav a"));
+      if (!links.length || !("IntersectionObserver" in window)) return;
+      var byId = {};
+      links.forEach(function (a) { byId[a.getAttribute("href").slice(1)] = a; });
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          links.forEach(function (a) { a.classList.remove("active"); });
+          var link = byId[entry.target.id];
+          if (link) link.classList.add("active");
+        });
+      }, { rootMargin: "-40% 0px -50% 0px" });
+      document.querySelectorAll(".cs-section").forEach(function (s) { observer.observe(s); });
+    })();
+
+    // Before/after chart. Reads data/case-study-metrics.json; keeps the static
+    // "data pending" frame when the file is missing, empty, invalid or all null.
+    (function () {
+      var METRICS = [
+        { key: "avg_viewers", label: "Average viewers" },
+        { key: "chat_messages", label: "Chat messages" },
+        { key: "unique_chatters", label: "Unique chatters" }
+      ];
+      var pending = document.getElementById("metrics-pending");
+      var grid = document.getElementById("metrics-grid");
+      var tableWrap = document.getElementById("metrics-table");
+      var tableBody = document.getElementById("metrics-table-body");
+      var sourceEl = document.getElementById("metrics-source");
+      if (!pending || !grid) return;
+
+      fetch("data/case-study-metrics.json?v=" + Date.now())
+        .then(function (r) { if (!r.ok) throw new Error("missing"); return r.text(); })
+        .then(function (t) { if (!t.trim()) throw new Error("empty"); return JSON.parse(t); })
+        .then(render)
+        .catch(function () { /* pending frame stays visible */ });
+
+      function isNum(v) { return typeof v === "number" && isFinite(v); }
+
+      function monthLabel(m) {
+        var parts = String(m).split("-");
+        var names = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+        var mi = parseInt(parts[1], 10) - 1;
+        if (parts.length < 2 || isNaN(mi) || !names[mi]) return String(m);
+        return names[mi] + " " + parts[0].slice(2);
+      }
+
+      function compact(v) {
+        if (v >= 1000000) return (v / 1000000).toFixed(v % 1000000 ? 1 : 0) + "M";
+        if (v >= 10000) return Math.round(v / 1000) + "K";
+        if (v >= 1000) return (v / 1000).toFixed(1).replace(/\.0$/, "") + "K";
+        return String(Math.round(v * 10) / 10);
+      }
+
+      function full(v) { return Number(v).toLocaleString("en-GB"); }
+
+      function niceMax(v) {
+        if (v <= 0) return 1;
+        var p = Math.pow(10, Math.floor(Math.log(v) / Math.LN10));
+        var n = v / p;
+        var step = n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10;
+        return step * p;
+      }
+
+      function el(tag, attrs, text) {
+        var ns = "http://www.w3.org/2000/svg";
+        var e = document.createElementNS(ns, tag);
+        for (var k in attrs) if (attrs.hasOwnProperty(k)) e.setAttribute(k, attrs[k]);
+        if (text != null) e.textContent = text;
+        return e;
+      }
+
+      function render(data) {
+        var months = Array.isArray(data.months) ? data.months.filter(function (r) { return r && typeof r.month === "string"; }) : [];
+        var charts = METRICS.map(function (m) {
+          var label = (data.metrics && data.metrics[m.key] && data.metrics[m.key].label) || m.label;
+          var pts = months.map(function (row, i) { return { i: i, month: row.month, v: isNum(row[m.key]) ? row[m.key] : null }; });
+          var have = pts.filter(function (p) { return p.v !== null; });
+          return { key: m.key, label: label, points: pts, have: have };
+        });
+        var any = charts.some(function (c) { return c.have.length >= 2; });
+        if (!any) return;
+
+        pending.hidden = true;
+        grid.hidden = false;
+        grid.innerHTML = "";
+        charts.forEach(function (c) { grid.appendChild(buildChart(c, months, data)); });
+        buildTable(months, charts);
+        if (sourceEl) {
+          sourceEl.textContent = "Source: " + (data.source || "Twitch Channel Analytics export") +
+            (data.exported_on ? ", exported " + data.exported_on + "." : ".");
+        }
+      }
+
+      function buildChart(c, months, data) {
+        var card = document.createElement("div");
+        card.className = "cs-chart";
+        var h = document.createElement("h4");
+        h.textContent = c.label;
+        card.appendChild(h);
+
+        if (c.have.length < 2) {
+          var ph = document.createElement("div");
+          ph.className = "ph";
+          ph.innerHTML = '<span class="ph-tag">Data pending</span><p>No monthly values for this metric yet.</p>';
+          card.appendChild(ph);
+          return card;
+        }
+
+        var W = 320, H = 190, L = 44, R = 18, T = 22, B = 30;
+        var n = months.length;
+        var max = niceMax(Math.max.apply(null, c.have.map(function (p) { return p.v; })));
+        var x = function (i) { return n > 1 ? L + (i / (n - 1)) * (W - L - R) : L; };
+        var y = function (v) { return T + (1 - v / max) * (H - T - B); };
+
+        var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img" });
+        svg.appendChild(el("title", {}, c.label + ", monthly, " + monthLabel(months[0].month) + " to " + monthLabel(months[n - 1].month)));
+
+        var gridG = el("g", { "class": "grid" });
+        var axis = el("g", { "class": "axis" });
+        [0, 0.25, 0.5, 0.75, 1].forEach(function (f) {
+          var yy = y(max * f);
+          gridG.appendChild(el("line", { x1: L, x2: W - R, y1: yy, y2: yy }));
+          axis.appendChild(el("text", { x: L - 6, y: yy + 3.5, "text-anchor": "end" }, compact(max * f)));
+        });
+        svg.appendChild(gridG);
+        svg.appendChild(axis);
+
+        // x labels: first, launch, last
+        var launchIdx = -1;
+        months.forEach(function (m, i) { if (m.month === data.launch_month) launchIdx = i; });
+        var xl = el("g", { "class": "axis" });
+        xl.appendChild(el("text", { x: x(0), y: H - 10, "text-anchor": "start" }, monthLabel(months[0].month)));
+        xl.appendChild(el("text", { x: x(n - 1), y: H - 10, "text-anchor": "end" }, monthLabel(months[n - 1].month)));
+        if (launchIdx > 0 && launchIdx < n - 1) {
+          xl.appendChild(el("text", { x: x(launchIdx), y: H - 10, "text-anchor": "middle" }, monthLabel(months[launchIdx].month)));
+        }
+        svg.appendChild(xl);
+
+        if (launchIdx >= 0) {
+          svg.appendChild(el("line", { "class": "launch-line", x1: x(launchIdx), x2: x(launchIdx), y1: T - 6, y2: H - B }));
+          svg.appendChild(el("text", { "class": "launch-text", x: x(launchIdx) + 4, y: T - 8 }, data.launch_label || "launch"));
+        }
+
+        var d = "";
+        c.points.forEach(function (p) {
+          if (p.v === null) return;
+          d += (d ? " L" : "M") + x(p.i).toFixed(1) + " " + y(p.v).toFixed(1);
+        });
+        svg.appendChild(el("path", { "class": "series", d: d }));
+
+        var last = c.have[c.have.length - 1];
+        svg.appendChild(el("circle", { "class": "dot", cx: x(last.i), cy: y(last.v), r: 4 }));
+        svg.appendChild(el("text", { "class": "endlabel", x: x(last.i), y: y(last.v) - 9, "text-anchor": "end" }, full(last.v)));
+
+        // hover layer
+        var tip = getTooltip();
+        var slot = n > 1 ? (W - L - R) / (n - 1) : W - L - R;
+        c.points.forEach(function (p) {
+          if (p.v === null) return;
+          var hit = el("rect", { "class": "hit", x: x(p.i) - slot / 2, y: T - 6, width: slot, height: H - T - B + 6 });
+          var hd = el("circle", { "class": "hover-dot", cx: x(p.i), cy: y(p.v), r: 5 });
+          hit.addEventListener("mouseenter", function (ev) {
+            tip.textContent = monthLabel(p.month) + ": " + full(p.v) + " " + c.label.toLowerCase();
+            tip.hidden = false;
+            var rect = hd.getBoundingClientRect();
+            tip.style.left = (rect.left + rect.width / 2) + "px";
+            tip.style.top = rect.top + "px";
+          });
+          hit.addEventListener("mouseleave", function () { tip.hidden = true; });
+          svg.appendChild(hit);
+          svg.appendChild(hd);
+        });
+
+        card.appendChild(svg);
+        return card;
+      }
+
+      function getTooltip() {
+        var t = document.getElementById("cs-tooltip");
+        if (!t) {
+          t = document.createElement("div");
+          t.id = "cs-tooltip";
+          t.className = "cs-tooltip";
+          t.hidden = true;
+          document.body.appendChild(t);
+        }
+        return t;
+      }
+
+      function buildTable(months, charts) {
+        if (!tableWrap || !tableBody) return;
+        var html = '<table class="command-table"><thead><tr><th>Month</th>';
+        charts.forEach(function (c) { html += "<th>" + c.label + "</th>"; });
+        html += "</tr></thead><tbody>";
+        months.forEach(function (m, i) {
+          html += "<tr><td>" + monthLabel(m.month) + "</td>";
+          charts.forEach(function (c) {
+            var p = c.points[i];
+            html += "<td>" + (p && p.v !== null ? full(p.v) : "pending") + "</td>";
+          });
+          html += "</tr>";
+        });
+        html += "</tbody></table>";
+        tableBody.innerHTML = html;
+        tableWrap.hidden = false;
+      }
+    })();
+  </script>
+</body>
+</html>

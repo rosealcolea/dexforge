@@ -1,0 +1,27 @@
+{
+  "_readme": "Monthly channel metrics for the chart on case-study.html (section 4, 'Before and after launch'). Fill the numbers from the Twitch Channel Analytics CSV export: Creator Dashboard > Analytics > Channel Analytics > date range 1 Sept 2024 to today > Export CSV. Only the broadcaster login (Scromf9001) can export it. Keep a value null while it is unknown. The page shows a 'data pending' frame until at least two months have numbers for a metric; nothing on the page needs editing when the numbers arrive.",
+  "source": "Twitch Channel Analytics export",
+  "exported_on": null,
+  "launch_month": "2025-03",
+  "launch_label": "Stream Dex launch",
+  "metrics": {
+    "avg_viewers": { "label": "Average viewers", "unit": "viewers" },
+    "chat_messages": { "label": "Chat messages", "unit": "messages" },
+    "unique_chatters": { "label": "Unique chatters", "unit": "chatters" }
+  },
+  "months": [
+    { "month": "2024-09", "avg_viewers": null, "chat_messages": null, "unique_chatters": null },
+    { "month": "2024-10", "avg_viewers": null, "chat_messages": null, "unique_chatters": null },
+    { "month": "2024-11", "avg_viewers": null, "chat_messages": null, "unique_chatters": null },
+    { "month": "2024-12", "avg_viewers": null, "chat_messages": null, "unique_chatters": null },
+    { "month": "2025-01", "avg_viewers": null, "chat_messages": null, "unique_chatters": null },
+    { "month": "2025-02", "avg_viewers": null, "chat_messages": null, "unique_chatters": null },
+    { "month": "2025-03", "avg_viewers": null, "chat_messages": null, "unique_chatters": null },
+    { "month": "2025-04", "avg_viewers": null, "chat_messages": null, "unique_chatters": null },
+    { "month": "2025-05", "avg_viewers": null, "chat_messages": null, "unique_chatters": null },
+    { "month": "2025-06", "avg_viewers": null, "chat_messages": null, "unique_chatters": null },
+    { "month": "2025-07", "avg_viewers": null, "chat_messages": null, "unique_chatters": null },
+    { "month": "2025-08", "avg_viewers": null, "chat_messages": null, "unique_chatters": null },
+    { "month": "2025-09", "avg_viewers": null, "chat_messages": null, "unique_chatters": null }
+  ]
+}
